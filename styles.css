@@ -157,6 +157,7 @@ img { max-width: 100%; display: block; }
 .inquiry textarea { resize: vertical; }
 .hp { position: absolute; left: -9999px; opacity: 0; height: 0; }
 .form-note { text-align: center; font-size: .85rem; color: #6b7361; margin-top: .8rem; }
+.form-note a { color: var(--green); font-weight: 700; }
 .tc-note { text-align: center; margin-top: 1.2rem; color: var(--cream); }
 .tc-note a { color: var(--gold); font-weight: 700; }
 
