@@ -11,16 +11,16 @@ function doPost(e) {
     var movein = String(p.movein || '').slice(0, 100);
     var message = String(p.message || '').slice(0, 2000);
 
-    // honeypot: real users never fill this
-    if (p.company) return json({ ok: true });
+    // honeypot: bots fill this, but never silently drop — flag instead
+    var spamFlag = p.xq_verify || p.company ? ' [possible spam]' : '';
     if (!name && !email && !phone) return json({ ok: false, error: 'empty' });
 
     var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
-    sheet.appendRow([new Date(), name, email, phone, units, movein, message, '812-house.com']);
+    sheet.appendRow([new Date(), name, email, phone, units, movein, message, '812-house.com' + spamFlag]);
 
     MailApp.sendEmail({
       to: NOTIFY_EMAIL,
-      subject: '812 House inquiry: ' + (name || email || phone),
+      subject: '812 House inquiry: ' + (name || email || phone) + spamFlag,
       body:
         'New leasing inquiry from 812-house.com\n\n' +
         'Name: ' + name + '\n' +
