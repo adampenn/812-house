@@ -65,7 +65,7 @@
   <h2>Four units, all with their own front door</h2>
   <p class="lede">Two 2-bedroom units and two 1-bedroom units with the kind of space you don't get in a complex — real living rooms, separate dining rooms, and covered porches. Every unit comes with one off-street parking spot in the back lot (two shorter cars can fit tandem). Contact us for current pricing and availability.</p>
 
-  <article class="unit">
+  <article class="unit" data-unit="1">
     <div class="unit-head">
       <h3>Unit 1</h3><span class="unit-tag">2 Bed &middot; 1 Bath</span>
     </div>
@@ -79,7 +79,7 @@
     <a class="fp-link" href="images/fp-unit1.jpg" target="_blank" rel="noopener">View Unit 1 floor plan →</a>
   </article>
 
-  <article class="unit">
+  <article class="unit" data-unit="2">
     <div class="unit-head">
       <h3>Unit 2</h3><span class="unit-tag">2 Bed &middot; 1 Bath</span>
     </div>
@@ -93,7 +93,7 @@
     <a class="fp-link" href="images/fp-unit2.jpg" target="_blank" rel="noopener">View Unit 2 floor plan →</a>
   </article>
 
-  <article class="unit">
+  <article class="unit" data-unit="3">
     <div class="unit-head">
       <h3>Unit 3</h3><span class="unit-tag">1 Bed &middot; 1 Bath</span>
     </div>
@@ -107,11 +107,11 @@
     <a class="fp-link" href="images/fp-unit3.jpg" target="_blank" rel="noopener">View Unit 3 floor plan →</a>
   </article>
 
-  <article class="unit">
+  <article class="unit" data-unit="4">
     <div class="unit-head">
       <h3>Unit 4</h3><span class="unit-tag">1 Bed &middot; 1 Bath</span>
     </div>
-    <p>One bedroom plus a separate dining room, chandelier included. Updated kitchen with wood-style floors and plenty of counter space.</p>
+    <p>One bedroom plus a separate dining room that works as an office, den, or flex space — chandelier included. Updated kitchen with wood-style floors and plenty of counter space. Worth knowing: the bathroom opens off the bedroom.</p>
     <div class="unit-gallery">
       <img src="images/u4-living.jpg" alt="Unit 4 living room, staged" loading="lazy">
       <img src="images/u4-dining.jpg" alt="Unit 4 dining room" loading="lazy">
@@ -164,9 +164,8 @@
     <p class="form-note" id="form-status">We typically reply within one business day. Prefer to talk? Call or text <a href="tel:+15305207331">(530)&nbsp;520-7331</a>.</p>
   </form>
 
-  <!-- When a unit is live on TenantCloud, uncomment and set the listing URL:
-  <p class="tc-note">A unit is available right now — <a href="TENANTCLOUD_LISTING_URL">apply directly on TenantCloud</a>.</p>
-  -->
+  <!-- Filled automatically from TC_LISTINGS in the script below when a unit is live. -->
+  <p class="tc-note" id="tc-note" hidden></p>
  </div>
 </section>
 
@@ -198,6 +197,38 @@
 </footer>
 
 <script>
+/* ---- TenantCloud availability ----
+   When a unit goes live on TenantCloud, paste its public listing URL here;
+   set it back to null when it's leased. That's the only switch — the
+   "Available Now" button under the unit card and the note under the form
+   both key off this map. (GitHub Pages is static and can't query
+   TenantCloud cross-origin, so this stays a hand-flipped flag.) */
+const TC_LISTINGS = {
+  1: null,
+  2: null,
+  3: null,
+  4: 'https://listings1424591.tenantcloud.com/listings/199443',
+};
+
+const liveUnits = Object.entries(TC_LISTINGS).filter(([, url]) => url);
+liveUnits.forEach(([num, url]) => {
+  const card = document.querySelector(`.unit[data-unit="${num}"]`);
+  if (!card) return;
+  const cta = document.createElement('div');
+  cta.className = 'unit-avail';
+  cta.innerHTML = `<span class="avail-badge">Available Now</span>` +
+    `<a class="btn btn-gold" href="${url}" target="_blank" rel="noopener">Apply Now on TenantCloud</a>`;
+  card.appendChild(cta);
+});
+if (liveUnits.length) {
+  const tcNote = document.getElementById('tc-note');
+  const links = liveUnits.map(([num, url]) =>
+    `<a href="${url}" target="_blank" rel="noopener">Unit ${num}</a>`).join(', ');
+  tcNote.innerHTML = (liveUnits.length === 1 ? 'A unit is' : 'Units are') +
+    ` available right now — skip the wait and apply directly on TenantCloud: ${links}.`;
+  tcNote.hidden = false;
+}
+
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJqsymrlXHfhy44gRmuEhC004CeC0C2Kl6uqIZi32LkBH1RkzcwuISgnH0jj-8vWKY/exec';
 const form = document.getElementById('inquiry-form');
 const status = document.getElementById('form-status');
